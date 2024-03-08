@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.13.1.58284",
-      "templateHash": "8643176900855305703"
+      "version": "0.25.53.49325",
+      "templateHash": "5541939098267428796"
     }
   },
   "parameters": {
@@ -33,8 +33,8 @@
     "skuCapacity": {
       "type": "int",
       "defaultValue": 1,
-      "maxValue": 3,
       "minValue": 1,
+      "maxValue": 3,
       "metadata": {
         "description": "Describes plan's instance count"
       }
@@ -53,12 +53,24 @@
       }
     },
     "adminSqlPassword": {
-      "type": "secureString",
+      "type": "securestring",
       "metadata": {
         "description": "Admin SQL Server password"
       }
     },
-    "sonarQubeVersion": {
+    "sqlServerNameUser": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL Server name"
+      }
+    },
+    "nameSouerce": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL Server name"
+      }
+    },
+    "someTag": {
       "type": "string",
       "defaultValue": "latest",
       "metadata": {
@@ -68,9 +80,10 @@
   },
   "variables": {
     "appPlanName": "[format('plan-{0}', uniqueString(resourceGroup().id))]",
-    "appName": "[format('app-sonarqube-{0}', uniqueString(resourceGroup().id))]",
-    "sqlServerName": "[format('sql-{0}', uniqueString(resourceGroup().id))]",
-    "sqlDatabaseName": "sqldb-sonarqube"
+    "appName": "[format('app-sonarqube-{0}-{1}', parameters('nameSouerce'), uniqueString(resourceGroup().id))]",
+    "sqlServerName": "[format('sql-{0}-{1}', parameters('sqlServerNameUser'), uniqueString(resourceGroup().id))]",
+    "sqlDatabaseName": "sqldb-sonarqube",
+    "dockerHubRepository": "mc1arke/sonarqube-with-community-branch-plugin"
   },
   "resources": [
     {
@@ -84,13 +97,13 @@
       },
       "properties": {
         "clientAffinityEnabled": false,
-        "serverFarmId": "[reference(resourceId('Microsoft.Resources/deployments', 'app-service-plan'), '2020-10-01').outputs.Id.value]",
+        "serverFarmId": "[reference(resourceId('Microsoft.Resources/deployments', 'app-service-plan'), '2022-09-01').outputs.Id.value]",
         "siteConfig": {
-          "linuxFxVersion": "[format('DOCKER|sonarqube:{0}', parameters('sonarQubeVersion'))]",
+          "linuxFxVersion": "[format('DOCKER|{0}:{1}', variables('dockerHubRepository'), parameters('someTag'))]",
           "appSettings": [
             {
               "name": "SONARQUBE_JDBC_URL",
-              "value": "[format('jdbc:sqlserver://{0}:1433;database={1};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;', reference(resourceId('Microsoft.Resources/deployments', 'sqlserver-module'), '2020-10-01').outputs.fullyQualifiedDomainName.value, variables('sqlDatabaseName'))]"
+              "value": "[format('jdbc:sqlserver://{0}:1433;database={1};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;', reference(resourceId('Microsoft.Resources/deployments', 'sqlserver-module'), '2022-09-01').outputs.fullyQualifiedDomainName.value, variables('sqlDatabaseName'))]"
             },
             {
               "name": "SONARQUBE_JDBC_USERNAME",
@@ -134,7 +147,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "sqlserver-module",
       "properties": {
         "expressionEvaluationOptions": {
@@ -164,8 +177,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.13.1.58284",
-              "templateHash": "4338318148387306833"
+              "version": "0.25.53.49325",
+              "templateHash": "11133534706889292166"
             }
           },
           "parameters": {
@@ -183,7 +196,7 @@
               }
             },
             "adminSqlPassword": {
-              "type": "secureString",
+              "type": "securestring",
               "metadata": {
                 "description": "Admin SQL Server password"
               }
@@ -256,7 +269,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "app-service-plan",
       "properties": {
         "expressionEvaluationOptions": {
@@ -283,8 +296,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.13.1.58284",
-              "templateHash": "5442846630090900468"
+              "version": "0.25.53.49325",
+              "templateHash": "16506415159837937538"
             }
           },
           "parameters": {

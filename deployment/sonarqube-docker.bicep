@@ -30,18 +30,25 @@ param adminSqlUsername string
 @secure()
 param adminSqlPassword string
 
+@description('SQL Server name')
+param sqlServerNameUser string
+
+@description('SQL Server name')
+param nameSouerce string
+
 @description('Default is latest, change it to use a specific version https://hub.docker.com/_/sonarqube')
-param sonarQubeVersion string = 'latest'
+param someTag string = 'latest'
 
 var appPlanName = 'plan-${uniqueString(resourceGroup().id)}'
-var appName = 'app-sonarqube-${uniqueString(resourceGroup().id)}'
-var sqlServerName = 'sql-${uniqueString(resourceGroup().id)}'
+var appName = 'app-sonarqube-${nameSouerce}-${uniqueString(resourceGroup().id)}'
+var sqlServerName = 'sql-${sqlServerNameUser}-${uniqueString(resourceGroup().id)}'
 var sqlDatabaseName = 'sqldb-sonarqube'
+var dockerHubRepository = 'mc1arke/sonarqube-with-community-branch-plugin'
 
 module sqlserver 'core/sqlserver.bicep' = {
   name: 'sqlserver-module'
   params: {
-    adminSqlPassword:  adminSqlPassword
+    adminSqlPassword: adminSqlPassword
     adminSqlUsername: adminSqlUsername
     location: location
     sqlDatabaseName: sqlDatabaseName
@@ -70,7 +77,7 @@ resource webApplication 'Microsoft.Web/sites@2022-03-01' = {
     clientAffinityEnabled: false
     serverFarmId: appServicePlan.outputs.Id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|sonarqube:${sonarQubeVersion}'
+      linuxFxVersion: format('DOCKER|{0}:{1}', dockerHubRepository, someTag)
       appSettings: [
         {
           name: 'SONARQUBE_JDBC_URL'

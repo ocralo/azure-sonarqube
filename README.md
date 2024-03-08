@@ -1,6 +1,6 @@
 # SonarQube Azure Docker Deployment
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmhdbouk%2Fazure-sonarqube%2Fmain%2Fdeployment%2Fsonarqube-docker.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Focralo%2Fazure-sonarqube%2Fmain%2Fdeployment%2Fsonarqube-docker.json)
 
 
 This repository contains a [Bicep](https://github.com/Azure/bicep) file for deploying a fully configured instance of [SonarQube](https://www.sonarqube.org/) on Azure using Docker.
